@@ -29,6 +29,8 @@ class Spider:
                     if 'read.qidian.com/chapter' in request_url:
                         self.spider.queryContent(request_url)
                     end = time.time()
+                    if end - start < 1:
+                        time.sleep(3)
                     print("%s 抓取完毕！消耗 %0.2f 秒" % (request_url, end-start))
                 except Exception as e:
                     self.spider.addError(request_url)

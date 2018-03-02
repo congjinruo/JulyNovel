@@ -1,5 +1,5 @@
 ####添加书本方法
-```
+```js
 mutation addBookMutation($bookName: String!, $author: String, $bookTypeId: Int, $wordNumbers: Int, $cover: String, $banner: String, $summary: String, $status: Int = 0, $tags: String!, $siteId: Int = 1, $xbookId: String, $lastupdate: String) {
   addBook(input: {bookName: $bookName, summary: $summary, author: $author, bookTypeId: $bookTypeId, clickTimes: 0, wordNumbers: $wordNumbers, cover: $cover, banner: $banner, status: $status, tags: $tags, siteId: $siteId, xbookId: $xbookId, lastupdate: $lastupdate}) {
     book {
@@ -9,7 +9,6 @@ mutation addBookMutation($bookName: String!, $author: String, $bookTypeId: Int, 
     }
   }
 }
-
 
 **query variables**
 {
@@ -29,7 +28,7 @@ mutation addBookMutation($bookName: String!, $author: String, $bookTypeId: Int, 
 
 ```
 ####添加排行方法
-```
+```js
 mutation addRankMutation($bookId: Int, $rankTypeId: Int, $siteTypeId: Int) {
   addRank(input: {bookId: $bookId, rankTypeId: $rankTypeId, siteId: $siteTypeId}) {
     rank {

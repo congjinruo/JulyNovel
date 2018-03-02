@@ -97,11 +97,14 @@ class QidianSpider:
             chapter['sort'] = i + 1
             chapter['xchapterId'] = re.split(pattern_id, request_url)[4]
             chapter['xbookId'] = book['xbookId']
-
-            self.mRedis.setChapterHash(chapter)
-            self.mRedis.addRequest(request_url)
             if i == count -1 :
                 book["lastupdate"] = chapter['updatetime']
+
+            self.mRedis.setChapterHash(chapter)
+            content_key = "%s_content_%s_%s" % (self.siteId, book['xbookId'], chapter['xchapterId'])
+            if self.mRedis.isValidKey(content_key):
+                continue
+            self.mRedis.addRequest(request_url)
 
         self.mRedis.setBookHash(book)
 

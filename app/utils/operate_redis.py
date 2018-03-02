@@ -24,6 +24,18 @@ class MRedis:
         """
         return r.sismember("spider.all", requestUrl)
 
+    def isValidKey(self, key):
+        """
+        判断是否存在
+        """
+        isExists = r.exists(key)
+        if isExists:
+            item = r.hgetall(key)
+        if isExists and item:
+            return True
+        else:
+            return False
+
     def addRequest(self, requestUrl):
         """
         spider.all   set集合，包含所有请求（已处理，未处理。）
@@ -50,7 +62,7 @@ class MRedis:
             chapter_count = len(chapters)
             content_count = len(contents)
             if chapter_count == 0:
-                return
+                continue
             if chapter_count == content_count:
                 key = "%s_book_%s" % (self.siteId, bookId)
                 if not r.sismember("save.all", key):
@@ -58,6 +70,8 @@ class MRedis:
                     pipe.sadd("save.all", key)
                     pipe.lpush("save.wait", key)
                     pipe.execute()
+            else:
+                print("%s %s %s" % (bookId, chapter_count, content_count))
 
     def addSpiderError(self, requestUrl):
         """

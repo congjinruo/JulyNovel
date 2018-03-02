@@ -63,7 +63,7 @@ class MRedis:
             content_count = len(contents)
             if chapter_count == 0:
                 continue
-            if chapter_count == content_count:
+            if chapter_count - content_count < 10:
                 key = "%s_book_%s" % (self.siteId, bookId)
                 if not r.sismember("save.all", key):
                     pipe = r.pipeline()

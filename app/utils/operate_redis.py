@@ -111,7 +111,6 @@ class MRedis:
             return None
         key = items[1].decode()
         mHash = r.hgetall(key)
-        print(mHash)
         book = dict()
         for key in mHash:
             book[key.decode()] = mHash[key].decode()

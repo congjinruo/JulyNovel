@@ -31,9 +31,8 @@ def index():
 @app.route('/missionStart')
 def missionStart():
     i = 0
-    while(i < 3):
+    while(i < 24):
         i += 1
-        time.sleep(5)
         t = threading.Thread(target=Spider().run, name='spiderMission %s' % i)
         si = threading.Thread(target=Spider().insert, name='insertMission %s' % i)
 

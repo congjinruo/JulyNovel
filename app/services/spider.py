@@ -14,7 +14,7 @@ class Spider:
         if self.siteId == 1:
             self.spider = QidianSpider()
             i = 0
-            while(i < 1000):
+            while(i < 10000):
                 i += 1
                 start = time.time()
                 request_url = self.spider.mRedis.keepRequest()
@@ -26,11 +26,9 @@ class Spider:
                         self.spider.queryBannerList(request_url)
                     if 'book.qidian.com/info' in request_url:
                         self.spider.queryBookInfo(request_url)
-                    if 'read.qidian.com/chapter' in request_url:
+                    if 'qidian.com/chapter' in request_url:
                         self.spider.queryContent(request_url)
                     end = time.time()
-                    if end - start < 1:
-                        time.sleep(3)
                     print("%s 抓取完毕！消耗 %0.2f 秒" % (request_url, end-start))
                 except Exception as e:
                     self.spider.addError(request_url)
@@ -48,7 +46,7 @@ class Spider:
         if self.siteId == 1:
             self.save = Save()
             i = 0
-            while(i < 1000):
+            while(i < 100000):
                 i += 1
                 start = time.time()
                 book = self.save.mRedis.getBook()

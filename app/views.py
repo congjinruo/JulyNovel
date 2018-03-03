@@ -11,6 +11,7 @@ from app import cache
 from flask_cors import CORS
 from .services.spider import Spider
 import threading, time
+from .utils.operate_oss import OSS
 
 CORS(app, supports_credentials=True)
 
@@ -41,3 +42,10 @@ def missionStart():
     sc.start()
 
     return 'Mission Start ... '
+
+@app.route('/test/<key>')
+def test(key):
+    if key is None:
+        return 'fail'
+    OSS().delete_object(key)
+    return 'success'

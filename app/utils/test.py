@@ -1,3 +1,7 @@
+"""
+The flask application package.
+"""
+# -*- coding: utf-8 -*-
 import redis
 
 r = redis.StrictRedis(host='40.125.161.3', port=6379, db=0, password='77RuoXu123456')

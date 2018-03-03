@@ -58,7 +58,7 @@ class QidianSpider:
         status_tag = soup.select(".book-info .tag .blue")[0]
         summary_tag = soup.select(".book-info-detail .book-intro p")[0]
         label_tags =  soup.select(".book-state .detail .tag-wrap .tags")
-        volumn_tags = soup.select('.catalog-content-wrap .volume-wrap h3')
+       # volumn_tags = soup.select('.catalog-content-wrap .volume-wrap h3')
         chapter_tags = soup.select(".catalog-content-wrap .volume-wrap .cf li a")
 
         book = dict()

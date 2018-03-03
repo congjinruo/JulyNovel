@@ -10,6 +10,7 @@ class Save:
     """
     def __init__(self):
         self.mRedis = MRedis()
+        self.session = db_session
 
     def addBook(self, item):
         t = datetime.now()
@@ -29,8 +30,8 @@ class Save:
 
         book = BookModel(**self.convertField(item))
         # pylint: disable=no-member 
-        db_session.add(book)
-        db_session.commit()
+        self.session.add(book)
+        self.session.commit()
         self.addChapters(book.xbook_id, book.book_id)
 
     def addChapters(self, xbookId, bookId):
@@ -45,8 +46,8 @@ class Save:
             item.pop("xbookId")
             chapter = ChapterModel(**self.convertField(item))
             # pylint: disable=no-member  
-            db_session.add(chapter)
-            db_session.commit()
+            self.session.add(chapter)
+            self.session.commit()
             self.addContent(xbookId, chapter.xchapter_id, bookId, chapter.chapter_id)
 
     def addContent(self, xbookId, xchapterId, bookId, chapterId):
@@ -61,13 +62,13 @@ class Save:
         item.pop("xchapterId")
         content = ContentModel(**self.convertField(item))
         # pylint: disable=no-member  
-        db_session.add(content)
-        db_session.commit()
+        self.session.add(content)
+        self.session.commit()
 
 
     def getBookTypeId(self, typeName):
         # pylint: disable=no-member  
-        bookType = db_session.query(BookTypeModel).filter_by(type_name=typeName).first()
+        bookType = self.session.query(BookTypeModel).filter_by(type_name=typeName).first()
         if bookType is None:
             return -1
         else:

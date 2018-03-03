@@ -34,12 +34,10 @@ def missionStart():
     while(i < 50):
         i += 1
         t = threading.Thread(target=Spider().run, name='spiderMission %s' % i)
-        si = threading.Thread(target=Spider().insert, name='insertMission %s' % i)
-
-        t.start()
-        si.start()
-
+        t.start()   
+    si = threading.Thread(target=Spider().insert, name='insertMission %s' % i)
     sc = threading.Thread(target=Spider().timerStart, name='checkFinish')
+    si.start()
     sc.start()
 
     return 'Mission Start ... '

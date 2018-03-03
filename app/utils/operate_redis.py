@@ -61,7 +61,9 @@ class MRedis:
             contents = r.keys("%s_content_%s_*" % (self.siteId, bookId))
             chapter_count = len(chapters)
             content_count = len(contents)
+
             if chapter_count == 0:
+                r.lpush("spider.wait", "https://book.qidian.com/info/%s" %  bookId)
                 continue
             if chapter_count - content_count < 10:
                 key = "%s_book_%s" % (self.siteId, bookId)

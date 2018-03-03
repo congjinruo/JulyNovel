@@ -58,6 +58,8 @@ class Spider:
                 except Exception as e:
                     self.save.addError(book["xbookId"])
                     print("《%s》 归档出错，堆栈消息：%s" % (book["bookName"],  str(e).strip()))
+                finally:
+                    self.save.session.close()
                 end = time.time()
                 print("《%s》 归档完毕！消耗 %0.2f 秒" % (book["bookName"], end-start))
         if self.siteId == 2:

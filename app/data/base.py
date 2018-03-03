@@ -9,7 +9,7 @@ from config import Config
 
 from sqlalchemy import Column, DateTime, Integer, Text, func, String
 
-engine = create_engine(Config.MARIADB_SERVER, encoding="utf-8", echo=False)
+engine = create_engine(Config.MARIADB_SERVER, pool_size=100, encoding="utf-8", echo=False)
 
 db_session = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
 

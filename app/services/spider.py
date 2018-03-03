@@ -14,7 +14,7 @@ class Spider:
         if self.siteId == 1:
             self.spider = QidianSpider()
             i = 0
-            while(i < 10000):
+            while(i < 30000):
                 i += 1
                 start = time.time()
                 request_url = self.spider.mRedis.keepRequest()
@@ -46,7 +46,7 @@ class Spider:
         if self.siteId == 1:
             self.save = Save()
             i = 0
-            while(i < 100000):
+            while(i < 300000):
                 i += 1
                 start = time.time()
                 book = self.save.mRedis.getBook()

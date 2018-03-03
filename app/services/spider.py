@@ -21,7 +21,6 @@ class Spider:
                 try:
                     if request_url is None:
                         continue
-                    print("Spider Mission Start")
                     if 'www.qidian.com/book/coverrec' in request_url:
                         self.spider.queryBannerList(request_url)
                     if 'book.qidian.com/info' in request_url:
@@ -65,8 +64,6 @@ class Spider:
         if self.siteId == 2:
             pass
         print("MariaDB Insert End")
-        self.timer.cancel()
-        print("CheckFinish Mission Ended")
 
 
     def timerStart(self):

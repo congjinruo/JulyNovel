@@ -43,8 +43,20 @@ def missionStart():
 
     return 'Mission Start ... '
 
-@app.route('/test/<key>')
-def test(key):
+
+@app.route('/uploadAll')
+def uploadAll():
+    '''
+    一键上传图片到OSS
+    '''
+    OSS().upload_all_image()
+    return 'success'
+
+@app.route('/delete/<key>')
+def delete(key):
+    """
+    OSS 删除匹配key的所有文件
+    """
     if key is None:
         return 'fail'
     OSS().delete_object(key)

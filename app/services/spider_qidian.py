@@ -69,7 +69,8 @@ class QidianSpider:
         for label_tag in label_tags:
             tag = label_tag.text
             if '连续' in tag:
-                tags.append(tag)
+                continue
+            tags.append(tag)
         book['tags'] = '|'.join(tags)
         book['xbookId'] =  re.split(pattern_id, requestUrl)[3]
         book['bookName'] = name_tag.text

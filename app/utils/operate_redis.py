@@ -26,7 +26,7 @@ class MRedis:
 
     def isValidKey(self, key):
         """
-        判断是否存在
+        判断HASH是否存在
         """
         isExists = r.exists(key)
         if isExists:
@@ -63,7 +63,7 @@ class MRedis:
             content_count = len(contents)
 
             if chapter_count == 0:
-                r.lpush("spider.wait", "https://book.qidian.com/info/%s" %  bookId)
+                #r.lpush("spider.wait", "https://book.qidian.com/info/%s" %  bookId)
                 continue
             if chapter_count - content_count < 10:
                 key = "%s_book_%s" % (self.siteId, bookId)

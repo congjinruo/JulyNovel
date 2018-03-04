@@ -13,3 +13,4 @@ build
 
 # My configurations:
 config.py
+/logs/

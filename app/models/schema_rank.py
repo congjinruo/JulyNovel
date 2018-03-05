@@ -28,10 +28,13 @@ class Rank(SQLAlchemyObjectType):
         model = RankModel
         interfaces = (graphene.relay.Node,)
     book = graphene.Field(Book)
-    def resolve_book(self, info):
+    def resolve_book(self, info):            
         query = Book.get_query(info)
-        # pylint: disable=no-member  
-        return query.filter(BookModel.book_id==self.book_id).first()
+        # pylint: disable=no-member
+        query = query.get(self.book_id)
+        if self.rank_type_id not in [2, 4, 5]:
+            query.summary = ""
+        return query
 class AddRankInput(graphene.InputObjectType, RankAttribute):
     """Arguments to create  Rank."""
     pass

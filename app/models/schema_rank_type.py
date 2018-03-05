@@ -14,6 +14,7 @@ from .schema_rank import Rank, RankModel
 class RankTypeAttribute:
     type_id = graphene.ID(description="排行榜类别 ID")
     type_name = graphene.String(description="排行榜类别名称")
+    display_count = graphene.Int(description="默认展示数目")
     site_id = graphene.Int(description="类别来源站点")
     state = graphene.Int(description="是否启用：1 启用 0 停用")
 
@@ -25,13 +26,14 @@ class RankType(SQLAlchemyObjectType):
         interfaces = (graphene.relay.Node,)
     rankList = graphene.List(lambda:Rank, totalCount=graphene.Int())
     def resolve_rankList(self, info, **args):
-        query = Rank.get_query(info)
         # pylint: disable=no-member  
+        query = Rank.get_query(info)
         query = query.filter(RankModel.rank_type_id==self.type_id).order_by(RankModel.sort.desc())
         if args.get('totalCount') is not None:
-            return query.limit(args.get('totalCount'))
-        else:
-            return query
+            query = query.limit(args.get('totalCount'))
+        if self.display_count is not None:
+            query = query.limit(self.display_count)       
+        return query
 
 class AddRankTypeInput(graphene.InputObjectType, RankTypeAttribute):
     """Arguments to create  RankType."""

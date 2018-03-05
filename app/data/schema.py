@@ -60,12 +60,17 @@ class Query(graphene.ObjectType):
         #rank
     rankType = graphene.Field(lambda:RankType, rankTypeId=graphene.ID())
     rankTypeList = SQLAlchemyConnectionField(lambda:Rank)
+    homeRankList = graphene.List(lambda: RankType)
 
     def resolve_rankType(self, info, **args):
         query = RankType.get_query(info)
         if args.get('rankTypeId') is not None:
             query = query.filter(RankTypeModel.type_id==args.get('rankTypeId')).first()
         return query
+
+    def resolve_homeRankList(self, info):
+        query = RankType.get_query(info)
+        return query.filter(RankTypeModel.state==1).all()
      
 
 class Mutation(graphene.ObjectType):

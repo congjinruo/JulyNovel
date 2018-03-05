@@ -47,6 +47,7 @@ class RankType(Base):
     __tablename__ = 'RANK_TYPE'
     type_id = Column(Integer, primary_key=True)
     type_name = Column(String(255))
+    display_count = Column(Integer)
     site_id = Column(Integer)
     state = Column(Integer)
     createtime = Column(DateTime)

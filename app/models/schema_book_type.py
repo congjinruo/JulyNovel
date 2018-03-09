@@ -7,7 +7,6 @@ from datetime import datetime
 from graphene_sqlalchemy import SQLAlchemyObjectType
 from ..data.base import db_session
 from ..data.base import BookType as BookTypeModel
-from app import cache
 
 
 # Create a generic class to mutualize description of book attributes for both queries and mutations
@@ -26,7 +25,7 @@ class BookTypeChildren(SQLAlchemyObjectType):
     bookCount = graphene.Int()
 
     def resolve_bookCount(self, info):
-         # pylint: disable=no-member
+        # pylint: disable=no-member
         count = db_session.execute("SELECT COUNT(BOOK_TYPE_ID) FROM BOOK WHERE BOOK_TYPE_ID = " + str(self.type_id)).scalar()
         if count is None:
             return 0
@@ -39,6 +38,7 @@ class BookType(SQLAlchemyObjectType):
         model = BookTypeModel
         interfaces = (graphene.relay.Node,)
     children = graphene.List(BookTypeChildren, totalCount=graphene.Int())
+
     def resolve_children(self, info, **args):
         # pylint: disable=no-member
         if self.type_id > 3:
@@ -48,7 +48,7 @@ class BookType(SQLAlchemyObjectType):
             if args.get('totalCount') is not None:
                 return query.limit(args.get('totalCount'))
             else:
-                return query  
+                return query
 
 class AddBookTypeInput(graphene.InputObjectType, BookTypeAttribute):
     """Arguments to create  BookType."""

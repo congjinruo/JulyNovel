@@ -6,12 +6,14 @@ import graphene
 from graphene import relay
 from graphene_sqlalchemy import SQLAlchemyConnectionField, SQLAlchemyObjectType
 from ..data.base import db_session
-from ..models.schema_book import Book, BookModel, AddBook, UpdateBook
-from ..models.schema_book_type import BookType, BookTypeModel, AddBookType, UpdateBookType
-from ..models.schema_rank import Rank, RankModel, AddRank, UpdateRank
-from ..models.schema_rank_type import RankType, RankTypeModel, AddRankType, UpdateRankType
+from .schema_model import Book, BookModel, AddBook, UpdateBook
+from .schema_model import BookType, BookTypeModel, AddBookType, UpdateBookType
+from .schema_model import Rank, RankModel, AddRank, UpdateRank
+from .schema_model import RankType, RankTypeModel, AddRankType, UpdateRankType
+from .schema_model import Chapter, ChapterModel, AddChapter, UpdateChapter
+from .schema_model import Content, ContentModel, AddContent, UpdateContent
 from sqlalchemy import and_
-from app import cache
+
 """
 GraphQL查询
 """
@@ -19,12 +21,25 @@ class Query(graphene.ObjectType):
     """The query root of JulyNovel's GraphQL interface."""
     node = relay.Node.Field()
     # Book
-    book = graphene.Field(Book, bookId=graphene.ID())
+    book = graphene.Field(lambda: Book, bookId=graphene.ID())
     bookList = SQLAlchemyConnectionField(Book)
 
     def resolve_book(self, info, bookId):
         query = Book.get_query(info)
-        return query.filter(BookModel.book_id==bookId).first()
+        return query.get(bookId)
+
+    #Chapter
+    chapter = graphene.Field(lambda: Chapter, chapterId=graphene.ID())
+
+    def resolve_chapter(self, info, chapterId):
+        return Chapter.get_query(info).get(chapterId)
+
+    #Content
+    content = graphene.Field(lambda: Content, chapterId=graphene.ID())
+
+    def resolve_content(self, info, chapterId):
+        query = Content.get_query(info).filter(ContentModel.chapter_id==chapterId).first()
+        return query
 
     # BookType
     bookType = graphene.Field(lambda: BookType, typeId=graphene.ID())
@@ -57,7 +72,6 @@ class Query(graphene.ObjectType):
         return query.order_by(RankModel.sort.desc())
 
     #rankType
-        #rank
     rankType = graphene.Field(lambda:RankType, rankTypeId=graphene.ID())
     rankTypeList = SQLAlchemyConnectionField(lambda:Rank)
     homeRankList = graphene.List(lambda: RankType)
@@ -86,6 +100,13 @@ class Mutation(graphene.ObjectType):
     updateRank  = UpdateRank.Field()
     #rankType mutation
     addRankType = AddRankType.Field()
-    updateRankType  = UpdateRankType.Field()    
+    updateRankType  = UpdateRankType.Field()
+    #chapter mutation
+    addChapter = AddChapter.Field()
+    updateChapter = UpdateChapter.Field()
+    #content mutation
+    addContent = AddContent.Field()
+    updateContent = UpdateContent.Field()
+
     
 schema = graphene.Schema(query=Query, mutation=Mutation)

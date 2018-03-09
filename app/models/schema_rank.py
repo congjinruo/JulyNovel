@@ -8,7 +8,6 @@ from graphene_sqlalchemy import SQLAlchemyObjectType
 from ..data.base import db_session
 from ..data.base import Rank as RankModel
 from .schema_book import Book, BookModel
-from app import cache
 
 
 # Create a generic class to mutualize description of book attributes for both queries and mutations
@@ -28,7 +27,7 @@ class Rank(SQLAlchemyObjectType):
         model = RankModel
         interfaces = (graphene.relay.Node,)
     book = graphene.Field(Book)
-    def resolve_book(self, info):            
+    def resolve_book(self, info):      
         query = Book.get_query(info)
         # pylint: disable=no-member
         query = query.get(self.book_id)

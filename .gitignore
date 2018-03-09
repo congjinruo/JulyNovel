@@ -14,3 +14,4 @@ build
 # My configurations:
 config.py
 /logs/
+/app/static/

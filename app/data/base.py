@@ -119,7 +119,7 @@ class Chapter(Base):
     book_id = Column(Integer)
     word_numbers = Column(Integer)
     volume_id = Column(Integer)
-    xchapter_id = Column(Integer)
+    xchapter_id = Column(String(255))
     free = Column(Integer)
     sort = Column(Integer)
     updatetime = Column(DateTime)

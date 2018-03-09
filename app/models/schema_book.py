@@ -7,6 +7,7 @@ from graphene_sqlalchemy import SQLAlchemyObjectType
 from ..data.base import db_session
 from ..data.base import Book as BookModel
 from .schema_book_type import BookType, BookTypeModel
+from .schema_chapter import Chapter, ChapterModel
 
 # Create a generic class to mutualize description of book attributes for both queries and mutations
 class BookAttribute:
@@ -27,6 +28,11 @@ class BookAttribute:
     file_url = graphene.String(description="生成的TXT文件地址") 
 
 
+class SimpleBook(SQLAlchemyObjectType):
+    class Meta:
+        model = BookModel
+        interfaces = (graphene.relay.Node,)
+
 class Book(SQLAlchemyObjectType):
     """Book node."""
 
@@ -34,10 +40,22 @@ class Book(SQLAlchemyObjectType):
         model = BookModel
         interfaces = (graphene.relay.Node,)
     bookType = graphene.Field(BookType)
+    chapterList = graphene.List(lambda:Chapter, totalCount=graphene.Int())
+
+    recommends = graphene.List(lambda:SimpleBook)
+    def resolve_chapterList(self, info, **args):
+        # pylint: disable=no-member 
+        query = Chapter.get_query(info).filter(ChapterModel.book_id==self.book_id)
+        query = query.order_by(ChapterModel.sort.desc()).all()
+        return query
     def resolve_bookType(self, info):
         query = BookType.get_query(info)
         # pylint: disable=no-member 
-        return query.filter(BookTypeModel.type_id==self.book_type_id).first()
+        return query.get(self.book_type_id)
+    def resolve_recommends(self, info):
+         # pylint: disable=no-member 
+         query = SimpleBook.get_query(info).filter(BookModel.book_type_id==self.book_type_id).limit(6)
+         return query
 
 
 class AddBookInput(graphene.InputObjectType, BookAttribute):

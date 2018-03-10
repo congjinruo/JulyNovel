@@ -54,6 +54,24 @@ class OSS:
             self.session.commit()
         self.session.close()
 
+    def upload_file_by_url(self, key, url_img):
+        '''
+        根据url上传文件
+        '''
+        try:
+            exist = bucket.object_exists(key)
+            if exist:
+                return True
+            else:
+                input = requests.get(url_img)
+                result = bucket.put_object(key, input, headers={'Content-Type': 'image/jpeg'})
+                if result.status != 200:
+                    return False
+                return True
+        except Exception as e:
+            print(e)
+            return False
+
     def delete_object(self, my_prefix='2017'):
         """
         删除无用的文件

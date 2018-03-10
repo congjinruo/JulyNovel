@@ -216,10 +216,31 @@ class Chapter(SQLAlchemyObjectType):
         model = ChapterModel
         interfaces = (graphene.relay.Node,)
     content = graphene.Field(lambda: Content)
+    book = graphene.Field(lambda: Book)
+    prevChapterId = graphene.ID()
+    nextChapterId = graphene.ID()
     def resolve_content(self, info):
         # pylint: disable=no-member
         query = Content.get_query(info).filter(ContentModel.chapter_id==self.chapter_id).first()
         return query
+    def resolve_book(self, info):
+        # pylint: disable=no-member
+        query = Book.get_query(info).get(self.book_id)
+        return query
+    def resolve_prevChapterId(self, info):
+         # pylint: disable=no-member
+         if self.sort == 1:
+             return 0
+         query = Chapter.get_query(info).filter(ChapterModel.sort==(self.sort + 1), ChapterModel.book_id==self.book_id).first()
+         return query.chapter_id
+
+    def resolve_nextChapterId(self, info):
+         # pylint: disable=no-member
+         query = Chapter.get_query(info).filter(ChapterModel.sort==(self.sort - 1), ChapterModel.book_id==self.book_id).first()
+         if query.chapter_id is None:
+             return 0
+         return query.chapter_id
+    
 class AddChapterInput(graphene.InputObjectType, ChapterAttribute):
     """Arguments to create a Chapter."""
     pass

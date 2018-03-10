@@ -230,15 +230,15 @@ class Chapter(SQLAlchemyObjectType):
     def resolve_prevChapterId(self, info):
          # pylint: disable=no-member
          if self.sort == 1:
-             return 0
-         query = Chapter.get_query(info).filter(ChapterModel.sort==(self.sort + 1), ChapterModel.book_id==self.book_id).first()
+             return None
+         query = Chapter.get_query(info).filter(ChapterModel.sort==(self.sort - 1), ChapterModel.book_id==self.book_id).first()
          return query.chapter_id
 
     def resolve_nextChapterId(self, info):
          # pylint: disable=no-member
-         query = Chapter.get_query(info).filter(ChapterModel.sort==(self.sort - 1), ChapterModel.book_id==self.book_id).first()
-         if query.chapter_id is None:
-             return 0
+         query = Chapter.get_query(info).filter(ChapterModel.sort==(self.sort + 1), ChapterModel.book_id==self.book_id).first()
+         if query is None:
+             return None
          return query.chapter_id
     
 class AddChapterInput(graphene.InputObjectType, ChapterAttribute):

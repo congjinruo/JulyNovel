@@ -94,7 +94,10 @@ class QidianSpider:
             chapter['chapterName'] = chapter_tag.text
             chapter['wordNumbers'] = info[3]
             chapter['updatetime'] = info[1].strip()
-            chapter['free'] = 1 if  'vip' in request_url  else 0
+            if 'vip' in request_url:
+                chapter['free'] = 1
+            else:
+                chapter['free'] = 0
             chapter['sort'] = i + 1
             chapter['xchapterId'] = re.split(pattern_id, request_url)[4]
             chapter['xbookId'] = book['xbookId']

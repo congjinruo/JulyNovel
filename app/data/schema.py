@@ -22,11 +22,26 @@ class Query(graphene.ObjectType):
     node = relay.Node.Field()
     # Book
     book = graphene.Field(lambda: Book, bookId=graphene.ID())
-    bookList = SQLAlchemyConnectionField(Book)
+    bookList = SQLAlchemyConnectionField(lambda: Book, bookTypeId=graphene.Int())
 
     def resolve_book(self, info, bookId):
         query = Book.get_query(info)
         return query.get(bookId)
+
+    def resolve_bookList(self, info, **args):
+        query = Book.get_query(info)
+        if args.get('bookTypeId') == 0:
+            return query
+        elif args.get('bookTypeId') in [1, 2, 3]:
+            typeQuery = BookType.get_query(info).filter(BookTypeModel.parent_type_id==args.get('bookTypeId')).all()
+            type_id_children = []
+            for bookType in typeQuery:
+                type_id_children.append(bookType.type_id)
+
+            query = query.filter(BookModel.book_type_id.in_(type_id_children))
+        else:
+            query = query.filter(BookModel.book_type_id==args.get('bookTypeId')).all()
+        return query
 
     #Chapter
     chapter = graphene.Field(lambda: Chapter, chapterId=graphene.ID())

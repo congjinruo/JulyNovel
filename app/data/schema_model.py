@@ -27,6 +27,15 @@ class BookTypeChildren(SQLAlchemyObjectType):
 	    model = BookTypeModel
 	    interfaces = (graphene.relay.Node, )
 
+    bookCount = graphene.Int()
+
+    def resolve_bookCount(self, info):
+        # pylint: disable=no-member
+        count = db_session.execute("SELECT COUNT(BOOK_TYPE_ID) FROM BOOK WHERE BOOK_TYPE_ID = " + str(self.type_id)).scalar()
+        if count is None:
+            return 0
+        return count
+
 class BookType(SQLAlchemyObjectType):
     """BookType node."""
 

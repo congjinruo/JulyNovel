@@ -26,14 +26,6 @@ class BookTypeChildren(SQLAlchemyObjectType):
     class Meta:
 	    model = BookTypeModel
 	    interfaces = (graphene.relay.Node, )
-    bookCount = graphene.Int()
-
-    def resolve_bookCount(self, info):
-        # pylint: disable=no-member
-        count = db_session.execute("SELECT COUNT(BOOK_TYPE_ID) FROM BOOK WHERE BOOK_TYPE_ID = " + str(self.type_id)).scalar()
-        if count is None:
-            return 0
-        return count
 
 class BookType(SQLAlchemyObjectType):
     """BookType node."""
@@ -43,6 +35,7 @@ class BookType(SQLAlchemyObjectType):
         interfaces = (graphene.relay.Node,)
     children = graphene.List(BookTypeChildren, totalCount=graphene.Int())
     recommends = graphene.List(lambda: Book, bookId=graphene.ID())
+    totalBookCount = graphene.Int()
     def resolve_children(self, info, **args):
         # pylint: disable=no-member
         if self.type_id > 3:
@@ -66,6 +59,23 @@ class BookType(SQLAlchemyObjectType):
         query = query.order_by(BookModel.createtime.desc()).limit(6)
         return query
 
+    def resolve_totalBookCount(self, info):
+        # pylint: disable=no-member
+        if self.type_id == -1:
+            count = db_session.execute("SELECT COUNT(BOOK_TYPE_ID) FROM BOOK ").scalar()
+        elif self.type_id in [1, 2, 3]:
+            typeQuery = BookType.get_query(info).filter(BookTypeModel.parent_type_id==self.type_id).all()
+            type_id_children = []            
+            for bookType in typeQuery:
+                print(str(bookType.type_id))   
+                type_id_children.append(str(bookType.type_id))
+            ids =  ','.join(type_id_children)
+            count =  db_session.execute("SELECT COUNT(BOOK_TYPE_ID) FROM BOOK WHERE BOOK_TYPE_ID in (%s)" %  ids).scalar()
+        else:
+            count = db_session.execute("SELECT COUNT(BOOK_TYPE_ID) FROM BOOK WHERE BOOK_TYPE_ID = " + str(self.type_id)).scalar()
+        if count is None:
+            return 0
+        return count
 class AddBookTypeInput(graphene.InputObjectType, BookTypeAttribute):
     """Arguments to create  BookType."""
     pass

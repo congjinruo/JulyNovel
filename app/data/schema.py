@@ -30,7 +30,7 @@ class Query(graphene.ObjectType):
 
     def resolve_bookList(self, info, **args):
         query = Book.get_query(info)
-        if args.get('bookTypeId') == 0:
+        if args.get('bookTypeId') == -1:
             return query
         elif args.get('bookTypeId') in [1, 2, 3]:
             typeQuery = BookType.get_query(info).filter(BookTypeModel.parent_type_id==args.get('bookTypeId')).all()

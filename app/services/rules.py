@@ -32,6 +32,31 @@ if __name__=='__main__':
     print('All subprocesses done.')
 """
 
+"""
+继承connection 增加totalCount
+class MyConnection(Connection):
+    class Meta:
+        node = UserType
+
+    total_count = Int()
+
+some_query = ConnectionField(MyConnection)
+
+def resolve_some_query(self, *_):
+  edges = .. create edges from query ...
+  total_count = .. calculate total ...
+  return MyConnection
+      total_count=total_count,
+      edges=edges,
+      page_info=PageInfo(
+            start_cursor=start_cursor.urlsafe() if start_cursor else '',
+            end_cursor=end_cursor,
+            has_previous_page=has_previous_page,
+            has_next_page=ndb_iter.has_next()
+        )
+  )
+"""
+
 
 
 

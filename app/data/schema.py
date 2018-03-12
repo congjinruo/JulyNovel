@@ -12,7 +12,7 @@ from .schema_model import Rank, RankModel, AddRank, UpdateRank
 from .schema_model import RankType, RankTypeModel, AddRankType, UpdateRankType
 from .schema_model import Chapter, ChapterModel, AddChapter, UpdateChapter
 from .schema_model import Content, ContentModel, AddContent, UpdateContent
-from sqlalchemy import and_
+from sqlalchemy import and_, or_
 
 """
 GraphQL查询
@@ -22,7 +22,7 @@ class Query(graphene.ObjectType):
     node = relay.Node.Field()
     # Book
     book = graphene.Field(lambda: Book, bookId=graphene.ID())
-    bookList = SQLAlchemyConnectionField(lambda: Book, bookTypeId=graphene.ID())
+    bookList = SQLAlchemyConnectionField(lambda: Book, bookTypeId=graphene.ID(), search=graphene.String())
 
     def resolve_book(self, info, bookId):
         query = Book.get_query(info)
@@ -30,17 +30,26 @@ class Query(graphene.ObjectType):
 
     def resolve_bookList(self, info, **args):
         query = Book.get_query(info)
-        if args.get('bookTypeId') == -1:
-            return query
-        elif args.get('bookTypeId') in [1, 2, 3]:
-            typeQuery = BookType.get_query(info).filter(BookTypeModel.parent_type_id==args.get('bookTypeId')).all()
-            type_id_children = []
-            for bookType in typeQuery:
-                type_id_children.append(bookType.type_id)
+        if args.get('bookTypeId') is not None:
+            if args.get('bookTypeId') == -1:
+                return query
+            elif args.get('bookTypeId') in [1, 2, 3]:
+                typeQuery = BookType.get_query(info).filter(BookTypeModel.parent_type_id==args.get('bookTypeId')).all()
+                type_id_children = []
+                for bookType in typeQuery:
+                    type_id_children.append(bookType.type_id)
 
-            query = query.filter(BookModel.book_type_id.in_(type_id_children))
-        else:
-            query = query.filter(BookModel.book_type_id==args.get('bookTypeId')).all()
+                query = query.filter(BookModel.book_type_id.in_(type_id_children))
+            else:
+                query = query.filter(BookModel.book_type_id==args.get('bookTypeId')).all()
+        elif args.get('search') is not None:
+            query = query.filter(
+                or_(
+                    BookModel.book_name.like('%%%s%%' % args.get('search')), 
+                    BookModel.author.like('%%%s%%' % args.get('search'))
+                    )
+                ).all()
+            
         return query
 
     #Chapter

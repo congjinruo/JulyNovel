@@ -22,7 +22,7 @@ class Query(graphene.ObjectType):
     node = relay.Node.Field()
     # Book
     book = graphene.Field(lambda: Book, bookId=graphene.ID())
-    bookList = SQLAlchemyConnectionField(lambda: Book, bookTypeId=graphene.Int())
+    bookList = SQLAlchemyConnectionField(lambda: Book, bookTypeId=graphene.ID())
 
     def resolve_book(self, info, bookId):
         query = Book.get_query(info)

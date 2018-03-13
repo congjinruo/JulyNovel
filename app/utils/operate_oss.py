@@ -7,6 +7,7 @@ import requests
 from config import Config
 from ..data.base import Book as BookModel
 from ..data.base import db_session
+from sqlalchemy import or_, and_
 
 auth = oss2.Auth(Config.OSS_KEY_ID, Config.OSS_KEY_SECRET)
 
@@ -47,7 +48,7 @@ class OSS:
         将外链存档OSS
         '''
         # pylint: disable=no-member  
-        book_list = self.session.query(BookModel).filter(~BookModel.banner.like('https://congjinruo%'), ~BookModel.cover.like('https://congjinruo%')).all()
+        book_list = self.session.query(BookModel).filter(or_(~BookModel.banner.like('https://congjinruo%'), ~BookModel.cover.like('https://congjinruo%'))).all()
         for book in book_list:
             book.banner = self.upload_image(book.xbook_id, book.banner)
             book.cover = self.upload_image(book.xbook_id, book.cover)

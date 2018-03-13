@@ -11,7 +11,7 @@ class MRedis:
         '''
         从服务器向主服务器发起请求，获取任务Url
         '''
-        items = r.brpop("spider.wait", 360)
+        items = r.brpop("spider.wait", 120)
         if items is not None:
             return items[1].decode()
         else:
@@ -122,7 +122,7 @@ class MRedis:
         """
         从Redis中取出book数据
         """
-        items = r.brpop("save.wait", 360)
+        items = r.brpop("save.wait", 120)
         if not items:
             return None
         key = items[1].decode()

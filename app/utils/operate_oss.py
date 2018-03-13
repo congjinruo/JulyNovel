@@ -50,8 +50,10 @@ class OSS:
         # pylint: disable=no-member  
         book_list = self.session.query(BookModel).filter(or_(~BookModel.banner.like('https://congjinruo%'), ~BookModel.cover.like('https://congjinruo%'))).all()
         for book in book_list:
-            book.banner = self.upload_image(book.xbook_id, book.banner)
-            book.cover = self.upload_image(book.xbook_id, book.cover)
+            if book.banner is not None:
+                book.banner = self.upload_image(book.xbook_id, book.banner)
+            if book.cover is not None:
+                book.cover = self.upload_image(book.xbook_id, book.cover)
             self.session.commit()
         self.session.close()
 

@@ -47,6 +47,17 @@ class MRedis:
             pipe.lpush("spider.wait", requestUrl)
             pipe.execute()
 
+    def addRequests(self, request_url_list):
+        """
+        spider.all   set集合，包含所有请求（已处理，未处理。）
+        spider.wait  list    待处理请求
+        """
+        pipe = r.pipeline()
+        pipe.sadd("spider.all", request_url_list)
+        pipe.lpush("spider.wait", request_url_list)
+        pipe.execute()
+
+
     def checkFinish(self):
         """
         检查书籍是否已被完整抓取
@@ -103,6 +114,16 @@ class MRedis:
         key ：siteId_chapter_xbookId_xchapterId
         """
         r.hmset('%s_chapter_%s_%s' % (self.siteId, mapping['xbookId'], mapping['xchapterId']), mapping)
+
+    def setChapters(self, chaptes):
+        """
+        pipe解决循环带来的速度慢,
+        效率大大提升
+        """
+        pipe = r.pipeline()
+        for chapter in chaptes:
+            pipe.hmset('%s_chapter_%s_%s' % (self.siteId, chapter['xbookId'], chapter['xchapterId']), chapter)
+        pipe.execute()
 
     def setContentHash(self, mapping):
         """

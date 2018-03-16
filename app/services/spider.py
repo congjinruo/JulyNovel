@@ -14,13 +14,15 @@ class Spider:
         if self.siteId == 1:
             self.spider = QidianSpider()
             i = 0
-            while(i < 300000):
+            while(i < 3000000):
                 i += 1
                 start = time.time()
                 request_url = self.spider.mRedis.keepRequest()
                 try:
                     if request_url is None:
                         continue
+                    if 'www.qidian.com/all' in request_url:
+                        self.spider.queryBookList(request_url)
                     if 'www.qidian.com/book/coverrec' in request_url:
                         self.spider.queryBannerList(request_url)
                     if 'book.qidian.com/info' in request_url:
@@ -45,7 +47,7 @@ class Spider:
         if self.siteId == 1:
             self.save = Save()
             i = 0
-            while(i < 300000):
+            while(i < 3000000):
                 i += 1
                 start = time.time()
                 book = self.save.mRedis.getBook()

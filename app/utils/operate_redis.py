@@ -53,8 +53,9 @@ class MRedis:
         spider.wait  list    待处理请求
         """
         pipe = r.pipeline()
-        pipe.sadd("spider.all", request_url_list)
-        pipe.lpush("spider.wait", request_url_list)
+        for request_url in request_url_list:
+            pipe.sadd("spider.all", request_url)
+            pipe.lpush("spider.wait", request_url)
         pipe.execute()
 
 

@@ -33,9 +33,8 @@ class QidianSpider:
             td_tag = tr_tags[i].select('td')[1]
             a_tag = td_tag.select('a')[0]
 
-            request_url = "https%s" % a_tag.attrs["href"] 
+            request_url = "https:%s" % a_tag.attrs["href"] 
             xbook_id = a_tag.attrs["data-bid"]
-            print(xbook_id)
             if db_util.is_book_saved(xbook_id=xbook_id):
                 continue
             self.mRedis.addRequest(request_url)

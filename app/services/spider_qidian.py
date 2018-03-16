@@ -113,7 +113,6 @@ class QidianSpider:
         chapters = []
         count = len(chapter_tags)
         #超过1000章，异步加载无法直接爬取，调用ajax接口
-        x = 0
         if count == 0:
             chapters = self.queryChapterApi(book["xbookId"])
             book["lastupdate"] = chapters[len(chapters) - 1]["updatetime"]
@@ -126,8 +125,6 @@ class QidianSpider:
                 #if self.mRedis.isValidKey(content_key):
                     #continue
                 request_url_list.append(request_url)
-                x += 1
-                print(x)
 
         else:
             #未超过1000章
@@ -157,7 +154,7 @@ class QidianSpider:
                     #continue
                 request_url_list.append(request_url)
         self.mRedis.setChapters(chapters)
-        self.mRedis.addRequest(request_url_list)
+        self.mRedis.addRequests(request_url_list)
         self.mRedis.setBookHash(book)
         return book
 

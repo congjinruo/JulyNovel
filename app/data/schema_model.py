@@ -60,10 +60,8 @@ class BookType(SQLAlchemyObjectType):
         # pylint: disable=no-member
         query = Book.get_query(info)
         if args.get('bookId') is not None:
-            print(1)
             query = query.filter(BookModel.book_type_id==self.type_id, ~(BookModel.book_id==args.get('bookId')))
         else:
-            print(0)
             query = query.filter(BookModel.book_type_id==self.type_id)
         query = query.order_by(BookModel.createtime.desc()).limit(6)
         return query
@@ -76,7 +74,6 @@ class BookType(SQLAlchemyObjectType):
             typeQuery = BookType.get_query(info).filter(BookTypeModel.parent_type_id==self.type_id).all()
             type_id_children = []            
             for bookType in typeQuery:
-                print(str(bookType.type_id))   
                 type_id_children.append(str(bookType.type_id))
             ids =  ','.join(type_id_children)
             count =  db_session.execute("SELECT COUNT(BOOK_TYPE_ID) FROM BOOK WHERE BOOK_TYPE_ID in (%s)" %  ids).scalar()

@@ -12,7 +12,7 @@ from .schema_model import Rank, RankModel, AddRank, UpdateRank
 from .schema_model import RankType, RankTypeModel, AddRankType, UpdateRankType
 from .schema_model import Chapter, ChapterModel, AddChapter, UpdateChapter
 from .schema_model import Content, ContentModel, AddContent, UpdateContent
-from sqlalchemy import and_, or_
+from sqlalchemy import and_, or_, case
 
 """
 GraphQL查询
@@ -25,8 +25,11 @@ class Query(graphene.ObjectType):
     bookList = SQLAlchemyConnectionField(lambda: Book, bookTypeId=graphene.ID(), search=graphene.String())
 
     def resolve_book(self, info, bookId):
-        query = Book.get_query(info)
-        return query.get(bookId)
+        query = Book.get_query(info).get(bookId)
+        # pylint: disable=no-member 
+        db_session.execute("UPDATE BOOK SET CLICK_TIMES = %s WHERE BOOK_ID = %s " % (query.click_times + 1, bookId))
+        db_session.commit()
+        return query
 
     def resolve_bookList(self, info, **args):
         query = Book.get_query(info)
@@ -39,7 +42,7 @@ class Query(graphene.ObjectType):
                 for bookType in typeQuery:
                     type_id_children.append(bookType.type_id)
 
-                query = query.filter(BookModel.book_type_id.in_(type_id_children))
+                query = query.filter(BookModel.book_type_id.in_(type_id_children)).order_by(BookModel.createtime.desc())
             else:
                 query = query.filter(BookModel.book_type_id==args.get('bookTypeId')).all()
         elif args.get('search') is not None:
@@ -48,7 +51,7 @@ class Query(graphene.ObjectType):
                     BookModel.book_name.like('%%%s%%' % args.get('search')), 
                     BookModel.author.like('%%%s%%' % args.get('search'))
                     )
-                ).all()
+                ).order_by(case(BookModel.book_name.contains(args.get("search")), value=1, else_=0)).all()
             
         return query
 

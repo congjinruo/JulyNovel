@@ -62,6 +62,9 @@ class DBUtil:
                 db_session.execute("UPDATE CHAPTER SET SORT = %s  WHERE CHAPTER_ID = %s" % (i, chapter["CHAPTER_ID"]))
         db_session.commit()
 
+    def add_clicktimes(self):
+        pass
+
     def close(self):
         # pylint: disable=no-member 
         db_session.flush()

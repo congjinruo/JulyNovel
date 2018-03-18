@@ -44,15 +44,18 @@ class Query(graphene.ObjectType):
 
                 query = query.filter(BookModel.book_type_id.in_(type_id_children)).order_by(BookModel.createtime.desc())
             else:
-                query = query.filter(BookModel.book_type_id==args.get('bookTypeId')).all()
+                query = query.filter(BookModel.book_type_id==args.get('bookTypeId')).order_by(BookModel.createtime.desc().all()
         elif args.get('search') is not None:
-            query = query.filter(
-                or_(
-                    BookModel.book_name.like('%%%s%%' % args.get('search')), 
-                    BookModel.author.like('%%%s%%' % args.get('search'))
-                    )
-                ).order_by(case(BookModel.book_name.contains(args.get("search")), value=1, else_=0)).all()
-            
+            #query = query.filter(or_(BookModel.book_name.like('%%%s%%' % args.get('search')), BookModel.author.like('%%%s%%' % args.get('search')))).all()
+            bookList_a = query.filter(BookModel.book_name.like('%%%s%%' % args.get('search'))).all()
+            bookList_b =query.filter(BookModel.author.like('%%%s%%' % args.get('search'))).all()
+            bookList_c = []     
+            for x in bookList_a:
+                bookList_c.append(x)
+                for y in bookList_b:
+                    if x.book_id != y.book_id:
+                        bookList_c.append(y)
+            return bookList_c
         return query
 
     #Chapter

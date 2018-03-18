@@ -13,6 +13,7 @@ from flask_cors import CORS
 from .services.spider import Spider
 import threading, time
 from .utils.operate_oss import OSS
+from .utils.operate_db import DBUtil
 
 CORS(app, supports_credentials=True)
 
@@ -72,3 +73,10 @@ def favicon():
 def robots():
     return send_from_directory(os.path.join(app.root_path, 'static'),
                                'robots.txt')
+
+@app.route('/test')
+def test():
+    db_util = DBUtil()
+    db_util.resort_chapters()
+
+    return 'testing ...'

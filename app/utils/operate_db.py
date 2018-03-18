@@ -4,6 +4,7 @@
 # -*- coding: utf-8 -*-
 from config import Config
 from ..data.base import Book as BookModel
+from ..data.base import Chapter as ChapterModel
 from ..data.base import db_session
 from sqlalchemy import or_, and_
 
@@ -46,6 +47,20 @@ class DBUtil:
              WHERE BOOK.XBOOK_ID='%s' AND  CHAPTER.CHAPTER_NAME = '%s'  LIMIT 1" % (args.get("xbook_id") ,args.get("chapter_name"))).scalar()
 
         return free == 1 or free == 2
+
+    def resort_chapters(self):
+        """
+        解决sort全为1的问题
+        """
+        # pylint: disable=no-member
+        books = db_session.execute("SELECT BOOK_ID FROM CHAPTER  WHERE SORT = 1 GROUP BY BOOK_ID HAVING COUNT(SORT) > 1").fetchall()
+        for book in books:
+            chapters = db_session.execute("SELECT CHAPTER_ID FROM CHAPTER WHERE BOOK_ID = %s ORDER BY UPDATETIME ASC " % book["BOOK_ID"]).fetchall()
+            i = 0
+            for chapter in chapters:
+                i += 1
+                db_session.execute("UPDATE CHAPTER SET SORT = %s  WHERE CHAPTER_ID = %s" % (i, chapter["CHAPTER_ID"]))
+        db_session.commit()
 
     def close(self):
         # pylint: disable=no-member 

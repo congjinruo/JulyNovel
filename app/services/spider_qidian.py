@@ -171,12 +171,13 @@ class QidianSpider:
         for vol in dic_res["data"]["vs"]:
             cs_list = vol["cs"]
             for cs in cs_list:
+                i += 1
                 chapter = dict()
                 chapter["chapterName"] = cs["cN"]
                 chapter["wordNumbers"] = str(cs["cnt"])
                 chapter['updatetime'] = cs["uT"]
                 chapter["free"] = cs["sS"]
-                chapter['sort'] = i + 1
+                chapter['sort'] = i
                 chapter['xchapterId'] = str(cs["id"])
                 chapter['xbookId'] = bookId
                 chapters.append(chapter)

@@ -50,8 +50,8 @@ class Query(graphene.ObjectType):
             bookList_a = query.filter(BookModel.book_name.like('%%%s%%' % args.get('search'))).all()
             bookList_b =query.filter(BookModel.author.like('%%%s%%' % args.get('search'))).all()
             bookList_c = [] + bookList_a
-            for x in bookList_a:
-                for y in bookList_b:
+            for y in bookList_b:
+                for x in bookList_a:
                     if x.book_id != y.book_id:
                         bookList_c.append(y)
             return bookList_c

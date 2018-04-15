@@ -1,4 +1,5 @@
 from .spider_qidian import QidianSpider
+from .spider_biquge import BiqugeSpider
 from .save import Save
 import time
 import threading
@@ -37,6 +38,27 @@ class Spider:
 
         if self.siteId == 2:
             pass
+        if self.siteId == 3:
+            pass
+        if self.siteId == 4:
+            self.spider = BiqugeSpider()
+            i = 0
+            while(i < 3000000):
+                i += 1
+                start = time.time()
+                request_url = self.spider.mRedis.keepRequest()
+                try:
+                    if request_url is None:
+                        continue
+                    if '.html' not in request_url:
+                        self.spider.queryBookInfo(request_url)
+                    if '.html' in request_url:
+                        self.spider.queryContent(request_url)
+                    end = time.time()
+                    print("%s 抓取完毕！消耗 %0.2f 秒" % (request_url, end-start))
+                except Exception as e:
+                    self.spider.addError(request_url)
+                    print("%s 抓取出错，堆栈消息：%s" % (request_url, str(e).strip()))
 
         print('Spider Mission Ended')
 
@@ -44,32 +66,29 @@ class Spider:
         """
         将数据插入MariaDB中
         """
-        if self.siteId == 1:
-            self.save = Save()
-            i = 0
-            while(i < 3000000):
-                i += 1
-                start = time.time()
-                book = self.save.mRedis.getBook()
-                if not book:
-                    continue
-                try:
-                    print("MariaDB Insert Start")
-                    self.save.addBook(book)
-                except Exception as e:
-                    self.save.addError(book["xbookId"])
-                    print("《%s》 归档出错，堆栈消息：%s" % (book["bookName"],  str(e).strip()))
-                finally:
-                    self.save.session.close()
-                end = time.time()
-                print("《%s》 归档完毕！消耗 %0.2f 秒" % (book["bookName"], end-start))
-        if self.siteId == 2:
-            pass
+        self.save = Save(siteId=self.siteId)
+        i = 0
+        while(i < 3000000):
+            i += 1
+            start = time.time()
+            book = self.save.mRedis.getBook()
+            if not book:
+                continue
+            try:
+                print("MariaDB Insert Start")
+                self.save.addBook(book)
+            except Exception as e:
+                self.save.addError(book["xbookId"])
+                print("《%s》 归档出错，堆栈消息：%s" % (book["bookName"],  str(e).strip()))
+            finally:
+                self.save.session.close()
+            end = time.time()
+            print("《%s》 归档完毕！消耗 %0.2f 秒" % (book["bookName"], end-start))
         print("MariaDB Insert End")
 
 
     def timerStart(self):
-        self.save = Save()
+        self.save = Save(siteId=self.siteId)
         try:
             self.timer = threading.Timer(20, self.checkFinish)
             self.timer.start()

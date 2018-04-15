@@ -8,11 +8,12 @@ class Save:
     """
     定时将数据归档到MariaDB
     """
-    def __init__(self):
-        self.mRedis = MRedis()
+    def __init__(self, siteId=1):
+        self.mRedis = MRedis(siteId=siteId)
         self.session = db_session
 
     def addBook(self, item):
+        print(item)
         t = datetime.now()
         item["siteId"] = self.mRedis.siteId
         item["createtime"] = t
@@ -72,6 +73,7 @@ class Save:
         if bookType is None:
             return -1
         else:
+            print(bookType.type_id)
             return bookType.type_id
 
     def convertField(self, item):

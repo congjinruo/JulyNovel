@@ -30,15 +30,17 @@ def index():
 
     return app.send_static_file('index.html')
 
-@app.route('/missionStart')
-def missionStart():
+@app.route('/missionStart/<key>')
+def missionStart(key):
+    if key is None:
+        key = 1
     i = 0
-    while(i < 50):
+    while(i < 30):
         i += 1
-        t = threading.Thread(target=Spider().run, name='spiderMission %s' % i)
-        t.start()   
-    si = threading.Thread(target=Spider().insert, name='insertMission %s' % i)
-    sc = threading.Thread(target=Spider().timerStart, name='checkFinish')
+        t = threading.Thread(target=Spider(siteId=key).run, name='spiderMission %s' % i)
+        t.start()
+    si = threading.Thread(target=Spider(siteId=key).insert, name='insertMission %s' % i)
+    sc = threading.Thread(target=Spider(siteId=key).timerStart, name='checkFinish')
     si.start()
     sc.start()
 

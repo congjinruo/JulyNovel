@@ -90,7 +90,7 @@ def af_request(resp):
     :param resp:
     :return:
     """
-    resp.headers['Access-Control-Allow-Origin'] = 'www.kuaijiajin.club'
+    resp.headers['Access-Control-Allow-Origin'] = 'https://www.kuaijiajin.club'
     #resp.headers['Access-Control-Allow-Methods'] = 'GET,POST'
     #resp.headers['Access-Control-Allow-Headers'] = 'x-requested-with,content-type'
     return resp

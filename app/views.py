@@ -15,7 +15,7 @@ import threading, time
 from .utils.operate_oss import OSS
 from .utils.operate_db import DBUtil
 
-CORS(app, supports_credentials=True, resources={r"/*": {"origins": "https://www.kuaijiajin.club"}})
+CORS(app, supports_credentials=True, origins="https://www.kuaijiajin.club")
 
 
 @app.teardown_appcontext

@@ -15,7 +15,7 @@ import threading, time
 from .utils.operate_oss import OSS
 from .utils.operate_db import DBUtil
 
-CORS(app, supports_credentials=True)
+CORS(app, supports_credentials=True, resources={r"/graphql/*": {"origins": "https://www.kuaijiajin.club"}})
 
 
 @app.teardown_appcontext
@@ -82,15 +82,3 @@ def test():
     db_util.resort_chapters()
 
     return 'testing ...'
-
-@app.after_request
-def af_request(resp):     
-    """
-    #请求钩子，在所有的请求发生后执行，加入headers。
-    :param resp:
-    :return:
-    """
-    resp.headers['Access-Control-Allow-Origin'] = 'https://www.kuaijiajin.club'
-    #resp.headers['Access-Control-Allow-Methods'] = 'GET,POST'
-    #resp.headers['Access-Control-Allow-Headers'] = 'x-requested-with,content-type'
-    return resp

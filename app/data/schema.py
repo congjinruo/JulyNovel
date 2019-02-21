@@ -23,7 +23,7 @@ class Query(graphene.ObjectType):
     # Book
     book = graphene.Field(lambda: Book, bookId=graphene.ID())
     bookList = SQLAlchemyConnectionField(lambda: Book, bookTypeId=graphene.ID(), search=graphene.String())
-
+    hotBookList = graphene.List(lambda:Book)
     def resolve_book(self, info, bookId):
         query = Book.get_query(info).get(bookId)
         # pylint: disable=no-member 
@@ -56,7 +56,10 @@ class Query(graphene.ObjectType):
                         bookList_c.append(y)
             return bookList_c
         return query
-
+    def resolve_hotBookList(self, info):
+         # pylint: disable=no-member 
+         query = Book.get_query(info).order_by(BookModel.click_times.desc()).limit(10)
+         return query
     #Chapter
     chapter = graphene.Field(lambda: Chapter, chapterId=graphene.ID())
 

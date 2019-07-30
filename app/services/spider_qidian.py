@@ -108,7 +108,7 @@ class QidianSpider:
         book['summary'] = summary_tag.text.strip()
         
         #for volumn_tag in volumn_tags:
-            #print(volumn_tag.contents[2].strip())
+        #print(volumn_tag.contents[2].strip())
         request_url_list = []
         chapters = []
         count = len(chapter_tags)
@@ -120,7 +120,7 @@ class QidianSpider:
             for cpt in chapters:
                 request_url = "https://vipreader.qidian.com/chapter/%s/%s" % (book['xbookId'], cpt["xchapterId"])
 
-                content_key = "%s|content|%s|%s" % (self.siteId, book['xbookId'], cpt['xchapterId'])
+                #content_key = "%s|content|%s|%s" % (self.siteId, book['xbookId'], cpt['xchapterId'])
                 #内容章节如果已经存在，那么不再去爬取，减小服务器压力
                 #if self.mRedis.isValidKey(content_key):
                     #continue
@@ -149,7 +149,7 @@ class QidianSpider:
                     book["lastupdate"] = chapter['updatetime']
 
                 chapters.append(chapter)
-                content_key = "%s|content|%s|%s" % (self.siteId, book['xbookId'], chapter['xchapterId'])
+                #content_key = "%s|content|%s|%s" % (self.siteId, book['xbookId'], chapter['xchapterId'])
                 #if self.mRedis.isValidKey(content_key):
                     #continue
                 request_url_list.append(request_url)

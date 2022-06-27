@@ -7,5 +7,5 @@ graphql-core==2.0
 graphql-relay==0.4.5
 redis==2.10.6
 oss2==2.4.0
-mysql-connector-python==8.0.6
+mysql-connector-python==8.0.14
 uwsgi==2.0.16
